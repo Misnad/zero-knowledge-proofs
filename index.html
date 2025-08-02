@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Evolution of Zero-Knowledge Proofs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Soothing Neutrals & Deep Blue -->
+    <!-- Application Structure Plan: A dashboard-style application with a thematic, narrative flow. It starts with core concepts, moves through historical eras (Pioneers, SNARKs, Transparency), and culminates in an interactive comparative dashboard. This structure is chosen to build understanding progressively, from foundational theory to practical trade-offs, making the complex evolution of ZKPs more digestible and engaging than a simple linear report. -->
+    <!-- Visualization & Content Choices: 1. Core Concepts -> Interactive HTML/CSS diagram -> Goal: Clarify foundational ideas engagingly. 2. Historical Progression -> Clickable Timeline -> Goal: Provide navigation and historical context. 3. System Comparison -> Chart.js charts & filterable table -> Goal: Enable easy analysis of trade-offs. 4. Protocol Flows -> Custom HTML/CSS diagrams -> Goal: Clearly illustrate specific processes without SVG. This mix of static text, custom diagrams, and interactive charts provides multiple ways to engage with the information, catering to different learning styles. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F7F4;
+            color: #2C3E50;
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link.active, .nav-link:hover {
+            color: #3498DB;
+            border-bottom-color: #3498DB;
+        }
+        .content-section {
+            scroll-margin-top: 80px;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .concept-btn.active {
+            background-color: #3498DB;
+            color: white;
+            border-color: #3498DB;
+        }
+        .timeline-item.active .timeline-dot {
+            background-color: #3498DB;
+            transform: scale(1.5);
+        }
+        .timeline-item.active .timeline-content {
+            font-weight: 700;
+            color: #3498DB;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4">
+            <ul class="flex items-center justify-center space-x-4 md:space-x-8 text-sm md:text-base">
+                <li><a href="#concepts" class="nav-link px-2 py-2">Concepts</a></li>
+                <li><a href="#pioneers" class="nav-link px-2 py-2">The Pioneers</a></li>
+                <li><a href="#snarks" class="nav-link px-2 py-2">The SNARK Revolution</a></li>
+                <li><a href="#transparency" class="nav-link px-2 py-2">The Quest for Transparency</a></li>
+                <li><a href="#comparison" class="nav-link px-2 py-2">Comparative View</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-8 md:py-12">
+
+        <section class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold mb-2">The Evolution of Zero-Knowledge Proofs</h1>
+            <p class="text-lg text-gray-600">An Interactive Exploration of Foundational Papers</p>
+            <p class="mt-4 max-w-3xl mx-auto">This application provides an interactive journey through the key milestones in ZKP history. Explore the core concepts, discover the seminal papers that defined the field, and compare modern systems to understand the trade-offs that drive cryptographic innovation.</p>
+        </section>
+
+        <section id="timeline" class="mb-20">
+            <h2 class="text-2xl font-bold text-center mb-8">A Timeline of Innovation</h2>
+            <div class="w-full max-w-5xl mx-auto">
+                <div class="relative">
+                    <div class="absolute left-1/2 h-full w-0.5 bg-gray-300"></div>
+                    <div class="grid grid-cols-2 gap-y-16">
+                        <div class="timeline-item text-right pr-8" data-target="pioneers">
+                            <div class="timeline-dot absolute right-[-6px] mt-1 w-3 h-3 rounded-full bg-gray-400 transition-all duration-300"></div>
+                            <div class="timeline-content cursor-pointer">
+                                <p class="font-semibold">GMR85</p>
+                                <p class="text-sm text-gray-500">The Genesis of Interaction</p>
+                            </div>
+                        </div>
+                        <div></div>
+                        <div></div>
+                        <div class="timeline-item text-left pl-8" data-target="pioneers">
+                            <div class="timeline-dot absolute left-[-6px] mt-1 w-3 h-3 rounded-full bg-gray-400 transition-all duration-300"></div>
+                            <div class="timeline-content cursor-pointer">
+                                <p class="font-semibold">Fiat-Shamir '86</p>
+                                <p class="text-sm text-gray-500">The Leap to Non-Interaction</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item text-right pr-8" data-target="snarks">
+                            <div class="timeline-dot absolute right-[-6px] mt-1 w-3 h-3 rounded-full bg-gray-400 transition-all duration-300"></div>
+                            <div class="timeline-content cursor-pointer">
+                                <p class="font-semibold">Pinocchio '13</p>
+                                <p class="text-sm text-gray-500">"Nearly Practical" SNARKs</p>
+                            </div>
+                        </div>
+                        <div></div>
+                        <div></div>
+                        <div class="timeline-item text-left pl-8" data-target="snarks">
+                            <div class="timeline-dot absolute left-[-6px] mt-1 w-3 h-3 rounded-full bg-gray-400 transition-all duration-300"></div>
+                            <div class="timeline-content cursor-pointer">
+                                <p class="font-semibold">Groth16</p>
+                                <p class="text-sm text-gray-500">Peak SNARK Efficiency</p>
+                            </div>
+                        </div>
+                         <div class="timeline-item text-right pr-8" data-target="transparency">
+                            <div class="timeline-dot absolute right-[-6px] mt-1 w-3 h-3 rounded-full bg-gray-400 transition-all duration-300"></div>
+                            <div class="timeline-content cursor-pointer">
+                                <p class="font-semibold">Bulletproofs '17</p>
+                                <p class="text-sm text-gray-500">Compact & Trustless</p>
+                            </div>
+                        </div>
+                        <div></div>
+                        <div></div>
+                        <div class="timeline-item text-left pl-8" data-target="transparency">
+                            <div class="timeline-dot absolute left-[-6px] mt-1 w-3 h-3 rounded-full bg-gray-400 transition-all duration-300"></div>
+                            <div class="timeline-content cursor-pointer">
+                                <p class="font-semibold">zk-STARKs '18</p>
+                                <p class="text-sm text-gray-500">Scalable Transparency</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="concepts" class="content-section bg-white p-8 rounded-xl shadow-lg mb-16">
+            <h2 class="text-3xl font-bold text-center mb-2">The Three Pillars of ZKPs</h2>
+            <p class="text-center text-gray-600 mb-8">Every Zero-Knowledge Proof must satisfy three core properties. Click each pillar to understand its role.</p>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-8">
+                <div class="flex flex-col items-center gap-4">
+                    <div class="flex space-x-4 mb-4">
+                        <button class="concept-btn active" data-concept="completeness">🛡️ Completeness</button>
+                        <button class="concept-btn" data-concept="soundness">⚖️ Soundness</button>
+                        <button class="concept-btn" data-concept="zero-knowledge">🤫 Zero-Knowledge</button>
+                    </div>
+                    <div id="concept-display" class="w-full max-w-md p-6 bg-gray-50 rounded-lg text-center transition-all duration-300">
+                        <!-- Content will be injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pioneers" class="content-section mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8">The Pioneers: Defining the Field</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-semibold mb-2">Goldwasser, Micali, Rackoff (1985)</h3>
+                    <p class="text-sm text-gray-500 mb-4">"The Knowledge Complexity of Interactive Proof Systems"</p>
+                    <p class="mb-4">This seminal paper laid the theoretical bedrock for the entire field. It redefined a "proof" as an interactive game and formally defined the concepts of **knowledge complexity** and the three pillars of ZKPs. It proved that proofs could be both interactive and probabilistic, a paradigm shift in computer science.</p>
+                    <h4 class="font-semibold mb-2">Key Contribution: The First Interactive Protocol</h4>
+                    <p>GMR85 introduced the first ZKP for a problem not known to be efficiently solvable: proving knowledge of a square root modulo a composite number (Quadratic Residuosity) without revealing the root itself. This demonstrated that the concept of zero-knowledge was not just a theoretical curiosity but a practical possibility.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-semibold mb-2">Fiat & Shamir (1986)</h3>
+                    <p class="text-sm text-gray-500 mb-4">"How to Prove Yourself"</p>
+                    <p class="mb-4">While GMR's work was revolutionary, its interactive nature was a practical limitation. The Fiat-Shamir paper provided a brilliant **heuristic** to convert many interactive proofs into non-interactive ones. This was a crucial leap that made ZKPs viable for asynchronous applications like digital signatures.</p>
+                    <h4 class="font-semibold mb-2">Key Contribution: The Random Oracle Model</h4>
+                    <p>The heuristic replaces the interactive verifier's random challenges with the output of a cryptographic hash function. This allows the prover to generate a complete, non-interactive proof in one go. This technique, analyzed in the "Random Oracle Model," is a foundational building block for most modern practical ZKP systems.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="snarks" class="content-section mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8">The SNARK Revolution: The Pursuit of Succinctness</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-semibold mb-2">Pinocchio (2013)</h3>
+                    <p class="text-sm text-gray-500 mb-4">"Nearly Practical Verifiable Computation"</p>
+                    <p class="mb-4">Pinocchio was a watershed moment, presenting the first end-to-end system that made verifiable computation with SNARKs almost practical. It introduced a full compiler pipeline to convert high-level programs into verifiable proofs, establishing the standard **arithmetization** process (Circuit -> R1CS -> QAP) used in many subsequent systems.</p>
+                    <h4 class="font-semibold mb-2">Impact:</h4>
+                    <p>With constant-size proofs (288 bytes) and verification times in milliseconds, Pinocchio proved that SNARKs could be a viable engineering tool, igniting a wave of research and becoming the basis for Zcash's first implementation.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-semibold mb-2">Groth16 (2016)</h3>
+                    <p class="text-sm text-gray-500 mb-4">"On the Size of Pairing-based Non-interactive Arguments"</p>
+                    <p class="mb-4">Groth16 is a masterful refinement of the SNARK methodology, optimized for ultimate performance. It set a new benchmark for proof size and verification speed that remains the gold standard for many applications. However, this performance comes at the cost of requiring a **per-circuit trusted setup**, a significant cryptographic and operational burden.</p>
+                    <h4 class="font-semibold mb-2">Impact:</h4>
+                    <p>Its proofs consist of just 3 group elements, and verification requires only 3 pairings. This unparalleled efficiency made it the de facto industry standard for high-performance applications like blockchain protocols, despite the trusted setup requirement.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="transparency" class="content-section mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8">The Quest for Transparency: Eliminating Trust</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-semibold mb-2">zk-STARKs (2018)</h3>
+                    <p class="text-sm text-gray-500 mb-4">"Scalable, transparent, and post-quantum secure"</p>
+                    <p class="mb-4">STARKs were a direct response to the trusted setup problem. They are fully **transparent**, relying only on public randomness and hash functions. They also offer **scalability** for huge computations and **plausible post-quantum security**, as they avoid the cryptographic assumptions vulnerable to quantum computers. The main trade-off is significantly larger proof sizes compared to SNARKs.</p>
+                    <h4 class="font-semibold mb-2">Impact:</h4>
+                    <p>STARKs provided a powerful, fully-featured alternative to SNARKs, ideal for applications demanding the highest levels of security, transparency, and scalability, such as blockchain rollups.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-semibold mb-2">Bulletproofs (2017)</h3>
+                    <p class="text-sm text-gray-500 mb-4">"Short Proofs for Confidential Transactions and More"</p>
+                    <p class="mb-4">Bulletproofs carved out a different niche in the transparent proof landscape. They also require **no trusted setup** and offer very compact proofs, especially when many proofs are aggregated together. Their proof size scales logarithmically, making them exceptionally efficient for validating large batches of statements, like confidential transactions in a cryptocurrency block.</p>
+                    <h4 class="font-semibold mb-2">Impact:</h4>
+                    <p>Their unique aggregation properties made them the perfect fit for privacy coins like Monero. While verification is slower than Groth16, their trustlessness and space-efficiency are invaluable for specific use cases.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="comparison" class="content-section bg-white p-8 rounded-xl shadow-lg">
+            <h2 class="text-3xl font-bold text-center mb-8">Comparative View: The ZKP Trade-Offs</h2>
+            <p class="text-center text-gray-600 mb-12">No single proof system is universally best. The choice depends on the application's priorities. This dashboard compares the key modern systems across several metrics.</p>
+            
+            <div class="grid lg:grid-cols-2 gap-12 mb-16">
+                <div>
+                    <h3 class="text-xl font-semibold text-center mb-4">Qualitative Feature Comparison</h3>
+                    <div class="chart-container">
+                        <canvas id="featuresChart"></canvas>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-center mb-4">Performance Snapshot (Relative)</h3>
+                    <div class="chart-container">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-xl font-semibold text-center mb-4">Detailed System Properties</h3>
+                <div class="flex justify-center space-x-2 mb-6">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="snark">SNARKs</button>
+                    <button class="filter-btn" data-filter="transparent">Transparent</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full min-w-max text-left">
+                        <thead class="border-b border-gray-300">
+                            <tr>
+                                <th class="p-2">System</th>
+                                <th class="p-2">Trusted Setup</th>
+                                <th class="p-2">Proof Size</th>
+                                <th class="p-2">Verification Time</th>
+                                <th class="p-2">Core Assumption</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparison-table">
+                            <!-- Rows injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-8 text-gray-500 text-sm">
+        <p>Interactive report generated from "A Foundational Review of Zero-Knowledge Proof Systems".</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const conceptData = {
+                completeness: {
+                    title: '🛡️ Completeness: The Guarantee of Honesty',
+                    text: 'If a statement is true and both the prover and verifier are honest, the proof will always be accepted. This ensures the system is reliable and functional for valid claims.'
+                },
+                soundness: {
+                    title: '⚖️ Soundness: The Shield Against Deception',
+                    text: 'If a statement is false, a dishonest prover cannot convince an honest verifier that it is true (except with a negligible probability). This ensures the integrity and security of the system.'
+                },
+                'zero-knowledge': {
+                    title: '🤫 Zero-Knowledge: The Cloak of Privacy',
+                    text: 'If a statement is true, the verifier learns nothing other than the fact that the statement is true. No secret information ("the witness") is revealed during the proof.'
+                }
+            };
+
+            const conceptDisplay = document.getElementById('concept-display');
+            const conceptBtns = document.querySelectorAll('.concept-btn');
+
+            function updateConcept(concept) {
+                conceptDisplay.innerHTML = `
+                    <h4 class="text-lg font-semibold mb-2">${conceptData[concept].title}</h4>
+                    <p class="text-gray-700">${conceptData[concept].text}</p>
+                `;
+                conceptBtns.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.concept === concept);
+                });
+            }
+
+            conceptBtns.forEach(btn => {
+                btn.addEventListener('click', () => updateConcept(btn.dataset.concept));
+            });
+
+            updateConcept('completeness');
+
+            const comparisonData = [
+                { system: 'Groth16', type: 'snark', setup: 'Per-Circuit', size: 'Very Small (Constant)', verification: 'Extremely Fast', assumption: 'Pairings' },
+                { system: 'zk-STARK', type: 'transparent', setup: 'None (Transparent)', size: 'Large (Poly-log)', verification: 'Fast (Poly-log)', assumption: 'Hashes' },
+                { system: 'Bulletproofs', type: 'transparent', setup: 'None (Transparent)', size: 'Small (Logarithmic)', verification: 'Slow', assumption: 'Discrete Log' },
+                { system: 'Pinocchio', type: 'snark', setup: 'Per-Circuit', size: 'Small (Constant)', verification: 'Very Fast', assumption: 'Pairings' },
+            ];
+
+            const tableBody = document.getElementById('comparison-table');
+            const filterBtns = document.querySelectorAll('.filter-btn');
+
+            function renderTable(filter) {
+                tableBody.innerHTML = '';
+                const filteredData = comparisonData.filter(item => {
+                    if (filter === 'all') return true;
+                    return item.type === filter;
+                });
+
+                filteredData.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-gray-200 hover:bg-gray-50 transition-colors';
+                    row.dataset.type = item.type;
+                    row.innerHTML = `
+                        <td class="p-3 font-semibold">${item.system}</td>
+                        <td class="p-3">${item.setup}</td>
+                        <td class="p-3">${item.size}</td>
+                        <td class="p-3">${item.verification}</td>
+                        <td class="p-3">${item.assumption}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+            
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderTable(btn.dataset.filter);
+                });
+            });
+
+            renderTable('all');
+            
+            const featuresChartCtx = document.getElementById('featuresChart').getContext('2d');
+            new Chart(featuresChartCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Groth16', 'zk-STARK', 'Bulletproofs'],
+                    datasets: [
+                        { label: 'Transparency', data: [0, 1, 1], backgroundColor: '#3498DB' },
+                        { label: 'Post-Quantum Security', data: [0, 1, 0], backgroundColor: '#2980B9' },
+                        { label: 'Aggregation', data: [0, 0, 1], backgroundColor: '#9B59B6' },
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true, ticks: { display: false }, grid: { display: false } },
+                        y: { stacked: true, grid: { display: false } }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + (context.raw === 1 ? 'Yes' : 'No');
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const performanceChartCtx = document.getElementById('performanceChart').getContext('2d');
+            new Chart(performanceChartCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Groth16', 'zk-STARK', 'Bulletproofs'],
+                    datasets: [
+                        { label: 'Proof Size', data: [1, 8, 3], backgroundColor: '#E74C3C' },
+                        { label: 'Verification Time', data: [1, 2, 10], backgroundColor: '#F1C40F' },
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'Relative Cost (Lower is Better)' } }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.raw + 'x (relative)';
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.content-section');
+            const timelineItems = document.querySelectorAll('.timeline-item');
+
+            function changeActiveLink() {
+                let index = sections.length;
+                while(--index && window.scrollY + 100 < sections[index].offsetTop) {}
+                
+                navLinks.forEach((link) => link.classList.remove('active'));
+                if(index >= 0) {
+                   navLinks[index].classList.add('active');
+                }
+            }
+
+            timelineItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const targetId = item.dataset.target;
+                    document.getElementById(targetId).scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            window.addEventListener('scroll', () => {
+                changeActiveLink();
+                const scrollPosition = window.scrollY + window.innerHeight / 2;
+                sections.forEach(section => {
+                    if (scrollPosition >= section.offsetTop && scrollPosition < section.offsetTop + section.offsetHeight) {
+                        document.querySelectorAll(`.timeline-item[data-target="${section.id}"]`).forEach(item => {
+                            item.classList.add('active');
+                        });
+                    } else {
+                         document.querySelectorAll(`.timeline-item[data-target="${section.id}"]`).forEach(item => {
+                            item.classList.remove('active');
+                        });
+                    }
+                });
+            });
+
+            changeActiveLink();
+            
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+            
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(button => {
+                button.classList.add('px-4', 'py-2', 'border', 'rounded-full', 'text-sm', 'transition-colors', 'duration-200');
+                if (!button.classList.contains('active')) {
+                    button.classList.add('border-gray-300', 'text-gray-600', 'hover:bg-gray-100');
+                } else {
+                     button.classList.add('bg-blue-500', 'text-white', 'border-blue-500');
+                }
+            });
+            
+            const conceptButtons = document.querySelectorAll('.concept-btn');
+            conceptButtons.forEach(button => {
+                button.classList.add('px-4', 'py-2', 'border-2', 'rounded-full', 'font-semibold', 'transition-all', 'duration-200', 'cursor-pointer');
+                 if (!button.classList.contains('active')) {
+                    button.classList.add('border-gray-300', 'text-gray-700', 'bg-white', 'hover:border-blue-400');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
